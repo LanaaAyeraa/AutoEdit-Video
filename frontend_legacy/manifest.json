@@ -1,0 +1,10 @@
+{
+  "name": "AutoEdit TikTok Video",
+  "short_name": "AutoEdit",
+  "description": "Auto Video Editor berbasis referensi TikTok dan tema",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f13",
+  "theme_color": "#fe2c55",
+  "orientation": "portrait"
+}

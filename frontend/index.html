@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AutoEdit - AI Video Editor (TikTok Beat-Sync)</title>
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#fe2c55">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AutoEdit">
+  <link rel="apple-touch-icon" href="/static/icon.svg">
+  <link rel="icon" type="image/svg+xml" href="/static/icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="logo-badge">⚡</div>
+        <div>
+          <h1>AutoEdit <span>AI</span></h1>
+          <p class="tagline">TikTok Beat-Sync & Theme Editor</p>
+        </div>
+      </div>
+      <button class="btn-help" id="btnHelp" title="Panduan Install APK">📱 Install di HP</button>
+    </header>
+
+    <!-- Progress Steps Header -->
+    <div class="step-indicator">
+      <div class="step-node active" id="node1" data-step="1">
+        <div class="node-circle">1</div>
+        <span>Bahan</span>
+      </div>
+      <div class="step-line" id="line1"></div>
+      <div class="step-node" id="node2" data-step="2">
+        <div class="node-circle">2</div>
+        <span>CapCut</span>
+      </div>
+      <div class="step-line" id="line2"></div>
+      <div class="step-node" id="node3" data-step="3">
+        <div class="node-circle">3</div>
+        <span>Tema</span>
+      </div>
+      <div class="step-line" id="line3"></div>
+      <div class="step-node" id="node4" data-step="4">
+        <div class="node-circle">4</div>
+        <span>Export</span>
+      </div>
+    </div>
+
+    <!-- Main Content Flow -->
+    <main class="app-body">
+
+      <!-- STEP 1: IMPORT BAHAN -->
+      <section class="step-panel active" id="step1">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h2>📁 1. Import Bahan Video & Foto</h2>
+            <p>Pilih klip video atau foto yang ingin diedit otomatis.</p>
+          </div>
+
+          <div class="upload-dropzone" id="dropzoneClips">
+            <input type="file" id="inputClips" multiple accept="video/mp4,video/quicktime,video/mkv,image/jpeg,image/png" hidden>
+            <div class="dropzone-content">
+              <div class="dropzone-icon">🎬</div>
+              <h3>Pilih Video / Foto</h3>
+              <p>Format MP4, MOV, JPG, PNG (Bisa pilih sekaligus banyak)</p>
+              <button type="button" class="btn btn-secondary" onclick="document.getElementById('inputClips').click()">
+                Telusuri File
+              </button>
+            </div>
+          </div>
+
+          <!-- Preview Klip yang diunggah -->
+          <div class="uploaded-clips-container hidden" id="clipsContainer">
+            <div class="clips-header">
+              <span id="clipsCountText">0 klip dipilih</span>
+              <button class="btn-text-danger" id="btnClearClips">Hapus Semua</button>
+            </div>
+            <div class="clips-grid" id="clipsGrid"></div>
+          </div>
+
+          <div class="panel-actions">
+            <button class="btn btn-primary w-full" id="btnNext1" disabled>
+              Lanjut ke Template CapCut ➔
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2: CAPCUT TEMPLATE & REFERENCE -->
+      <section class="step-panel" id="step2">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h2>🎵 2. Pilih Template CapCut & Beat-Sync</h2>
+            <p>Pilih template CapCut trending siap pakai atau tempel link template CapCut/TikTok.</p>
+          </div>
+
+          <!-- Tabs Template CapCut vs URL vs Upload File -->
+          <div class="tab-switcher three-tabs">
+            <button class="tab-btn active" id="tabCapcut">🔥 Template CapCut</button>
+            <button class="tab-btn" id="tabUrl">🔗 Link CapCut / TikTok</button>
+            <button class="tab-btn" id="tabUpload">📂 Upload Sendiri</button>
+          </div>
+
+          <!-- Tab 1: Template CapCut Siap Pakai -->
+          <div class="tab-content active" id="contentCapcut">
+            <div class="capcut-templates-grid" id="capcutTemplatesGrid">
+              <!-- Rendered dynamically from API -->
+              <div class="loading-state">Memuat template CapCut...</div>
+            </div>
+          </div>
+
+          <!-- Tab 2: URL Input CapCut / TikTok -->
+          <div class="tab-content" id="contentUrl">
+            <div class="input-group">
+              <input type="text" id="inputTiktokUrl" class="text-input" placeholder="https://www.capcut.com/template-detail/... atau https://vt.tiktok.com/..." autocomplete="off">
+              <button class="btn btn-primary" id="btnFetchTiktok">Ambil Template</button>
+            </div>
+            <p class="field-hint">Mendukung link share CapCut (template-detail atau capcut.com/t/...) & link TikTok.</p>
+          </div>
+
+          <!-- Tab 3: Upload File Reference -->
+          <div class="tab-content" id="contentUpload">
+            <div class="upload-dropzone small" id="dropzoneRef">
+              <input type="file" id="inputRefFile" accept="audio/*,video/*" hidden>
+              <div class="dropzone-content">
+                <div class="dropzone-icon">🎶</div>
+                <p>Klik untuk upload file MP3, WAV, atau rekaman video</p>
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('inputRefFile').click()">
+                  Pilih File Musik
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hasil Deteksi Beat -->
+          <div class="audio-analysis-card hidden" id="audioAnalysisCard">
+            <div class="audio-info">
+              <div class="audio-disc-icon">💿</div>
+              <div class="audio-meta">
+                <h4 id="audioTitle">Judul Audio TikTok</h4>
+                <div class="audio-stats">
+                  <span class="stat-badge" id="statBpm">⚡ 125 BPM</span>
+                  <span class="stat-badge" id="statDuration">⏱️ 15.2s</span>
+                  <span class="stat-badge" id="statBeats">🥁 18 Beats</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visual Beat Waveform -->
+            <div class="beat-visualizer">
+              <div class="beat-bar-container" id="beatBar"></div>
+            </div>
+          </div>
+
+          <div class="panel-actions dual">
+            <button class="btn btn-ghost" id="btnBack2">⬅ Kembali</button>
+            <button class="btn btn-primary" id="btnNext2" disabled>Lanjut Pilih Tema ➔</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 3: PILIH TEMA EDITING -->
+      <section class="step-panel" id="step3">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h2>🎨 3. Pilih Tema Editing</h2>
+            <p>Sesuaikan gaya transisi, ritme potongan klip, dan warna video.</p>
+          </div>
+
+          <div class="theme-cards-grid">
+            <!-- Tema 1: Cinematic -->
+            <div class="theme-card" data-theme="cinematic">
+              <div class="theme-card-header">
+                <span class="theme-icon">🎬</span>
+                <span class="theme-badge">Sinematik</span>
+              </div>
+              <h3>Cinematic Mood</h3>
+              <p>Grading warna moody & teal-orange, alur transisi halus (crossfade), tempo elegan dan dramatis.</p>
+              <ul class="theme-features">
+                <li>✨ Moody Teal & Orange filter</li>
+                <li>✨ Pacing santai pada beat utama</li>
+                <li>✨ Suara latar ambient halus</li>
+              </ul>
+            </div>
+
+            <!-- Tema 2: Dokumentasi -->
+            <div class="theme-card" data-theme="dokumentasi">
+              <div class="theme-card-header">
+                <span class="theme-icon">📖</span>
+                <span class="theme-badge">Vlog / Story</span>
+              </div>
+              <h3>Dokumentasi / Vlog</h3>
+              <p>Menjaga kesinambungan cerita dan momen asli. Warna natural bersih dengan audio vokal tetap terdengar jelas.</p>
+              <ul class="theme-features">
+                <li>✨ Kontras natural & tajam</li>
+                <li>✨ Suara asli video (vokal) seimbang</li>
+                <li>✨ Pemotongan dinamis berurutan</li>
+              </ul>
+            </div>
+
+            <!-- Tema 3: TikTok Viral -->
+            <div class="theme-card active" data-theme="tiktok_viral">
+              <div class="theme-card-header">
+                <span class="theme-icon">⚡</span>
+                <span class="theme-badge popular">Trending 🔥</span>
+              </div>
+              <h3>TikTok Viral (Beat-Sync)</h3>
+              <p>Potongan super cepat tepat pada setiap hentakan drum/bass. Warna kontras pop dan transisi bertenaga.</p>
+              <ul class="theme-features">
+                <li>✨ Ultra-fast beat-sync cuts</li>
+                <li>✨ Warna pop & vibrant punchy</li>
+                <li>✨ Auto-framing 9:16 vertikal</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="panel-actions dual">
+            <button class="btn btn-ghost" id="btnBack3">⬅ Kembali</button>
+            <button class="btn btn-primary" id="btnStartRender">⚡ Render Video Auto-Edit</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 4: RENDER & HASIL -->
+      <section class="step-panel" id="step4">
+        <div class="panel-card text-center">
+
+          <!-- State Processing -->
+          <div class="render-processing" id="renderProcessing">
+            <div class="spinner-pulse"></div>
+            <h2>Sedang Mengedit Video Otomatis...</h2>
+            <p id="renderStatusText">Menyiapkan klip dan menyelaraskan beat musik...</p>
+            
+            <div class="progress-container">
+              <div class="progress-bar" id="progressBar" style="width: 10%;"></div>
+            </div>
+            <span class="progress-pct" id="progressPct">10%</span>
+
+            <div class="render-tips">
+              💡 <span>Proses dilakukan di engine lokal berkecepatan tinggi tanpa kompresi berlebih.</span>
+            </div>
+          </div>
+
+          <!-- State Completed Result -->
+          <div class="render-result hidden" id="renderResult">
+            <div class="success-badge">🎉 Video Selesai Dibuat!</div>
+            <h2>Video Siap Ditonton & Diunduh</h2>
+            
+            <div class="video-preview-wrapper">
+              <video id="finalVideoPlayer" class="video-preview" controls playsinline></video>
+            </div>
+
+            <div class="result-actions">
+              <a id="btnDownloadVideo" class="btn btn-primary btn-large w-full" download="auto_edited_tiktok.mp4">
+                📥 Unduh Video (MP4)
+              </a>
+              <button class="btn btn-secondary w-full" id="btnRestart">
+                🔄 Buat Video Baru
+              </button>
+            </div>
+          </div>
+
+          <!-- State Error -->
+          <div class="render-error hidden" id="renderError">
+            <div class="error-icon">⚠️</div>
+            <h2>Terjadi Kesalahan</h2>
+            <p id="renderErrorMsg">Gagal memproses video.</p>
+            <button class="btn btn-secondary" id="btnRetry">Coba Lagi</button>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Modal Panduan Install di HP -->
+    <div class="modal-overlay hidden" id="helpModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>📱 Cara Pasang Aplikasi di iPhone & Android</h3>
+          <button class="modal-close" id="btnCloseHelp">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p style="margin-bottom:12px;font-size:12px;color:var(--text-muted);">
+            Aplikasi ini berbasis <strong>PWA (Progressive Web App)</strong> berkecepatan tinggi, bisa dipasang langsung di iPhone & Android tanpa perlu lewat App Store/Play Store!
+          </p>
+
+          <div style="background:#181b28;border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid #2d334a;">
+            <h4 style="font-size:13px;color:#25f4ee;margin-bottom:6px;">🍏 Untuk Pengguna iPhone (iOS):</h4>
+            <ol class="help-steps">
+              <li>Pastikan iPhone terhubung ke <strong>WiFi yang sama</strong> dengan laptop.</li>
+              <li>Buka browser <strong>Safari</strong> di iPhone, lalu ketik alamat IP laptop (contoh: <code>http://192.168.1.X:8585</code>).</li>
+              <li>Ketuk ikon <strong>Share</strong> (kotak dengan panah ke atas) di bagian bawah layar Safari.</li>
+              <li>Gulir ke bawah, lalu pilih <strong>"Add to Home Screen"</strong> (Tambahkan ke Layar Utama).</li>
+              <li>Ketuk <strong>"Add" / "Tambah"</strong> di pojok kanan atas. Ikon AutoEdit langsung muncul di Home Screen iPhone Anda!</li>
+            </ol>
+          </div>
+
+          <div style="background:#181b28;border-radius:10px;padding:12px;border:1px solid #2d334a;">
+            <h4 style="font-size:13px;color:#fe2c55;margin-bottom:6px;">🤖 Untuk Pengguna Android:</h4>
+            <ol class="help-steps">
+              <li>Buka browser <strong>Google Chrome</strong> di HP Android.</li>
+              <li>Ketik alamat IP laptop Anda.</li>
+              <li>Ketuk menu <strong>Titik Tiga (⋮)</strong> di pojok kanan atas.</li>
+              <li>Pilih <strong>"Install aplikasi"</strong> atau <strong>"Tambahkan ke Layar Utama"</strong>.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

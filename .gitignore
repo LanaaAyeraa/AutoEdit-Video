@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary media storage and cache
+storage/
+storage/uploads/
+storage/processed/
+storage/output/
+storage/cache/
+
+# Large binaries (downloaded automatically or installed via winget)
+cloudflared.exe
+*.exe
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
